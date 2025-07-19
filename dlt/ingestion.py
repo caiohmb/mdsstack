@@ -8,7 +8,7 @@ CITIES = [
     {"name": "Porto Alegre", "lat": -30.0346, "lon": -51.2177},
     # ...adicione outras cidades
 ]
-DAYS_BACK = 20
+DAYS_BACK = 30
 
 def fetch_weather_data():
     delay = 3
