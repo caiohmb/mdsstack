@@ -12,7 +12,9 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
+    profiles: ["server"]
+    networks:
+      - prefect-network
   redis:
     image: redis:7
     volumes:
@@ -22,7 +24,10 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
+    profiles: ["server"]
+    networks:
+      - prefect-network
+  
   prefect-server:
     image: prefecthq/prefect:3-latest
     depends_on:
@@ -33,6 +38,8 @@ services:
     environment:
       PREFECT_API_DATABASE_CONNECTION_URL: postgresql+asyncpg://prefect:prefect@postgres:5432/prefect
       PREFECT_SERVER_API_HOST: 0.0.0.0
+      PREFECT_API_URL: http://localhost:4200/api
+      PREFECT_UI_URL: http://localhost:4200
       PREFECT_MESSAGING_BROKER: prefect_redis.messaging
       PREFECT_MESSAGING_CACHE: prefect_redis.messaging
       PREFECT_REDIS_MESSAGING_HOST: redis
@@ -41,7 +48,9 @@ services:
     command: prefect server start --no-services
     ports:
       - "4200:4200"
-
+    profiles: ["server"]
+    networks:
+      - prefect-network
   prefect-services:
     image: prefecthq/prefect:3-latest
     depends_on:
@@ -57,15 +66,26 @@ services:
       PREFECT_REDIS_MESSAGING_PORT: 6379
       PREFECT_REDIS_MESSAGING_DB: 0
     command: prefect server services start
-
+    profiles: ["server"]
+    networks:
+      - prefect-network
   prefect-worker:
     image: prefecthq/prefect:3-latest
-    depends_on:
-      prefect-server:
-        condition: service_started
     environment:
       PREFECT_API_URL: http://prefect-server:4200/api
-    command: prefect worker start --pool local-pool
+      DOCKER_HOST: unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: >
+      sh -c "pip install prefect-docker && 
+             prefect worker start --pool local-pool"
+    profiles: ["worker"]
+    networks:
+      - prefect-network
+
+networks:
+  prefect-network:
+    driver: bridge
 
 volumes:
   postgres_data:

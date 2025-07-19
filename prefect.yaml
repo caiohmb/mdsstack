@@ -1,0 +1,33 @@
+name: mds-flows
+
+pull:
+  - prefect.deployments.steps.git_clone_project:
+      repository: "https://github.com/caiohmb/mdsstack.git"
+      branch: "main"  # ou master, develop, etc.
+      # Para repositórios privados, você pode usar:
+      # credentials: "{{ prefect.blocks.git-credentials.meu-git-creds }}"
+
+build:
+  - prefect.deployments.steps.run_shell_script:
+      script: |
+        pip install -r requirements.txt || echo "No requirements.txt found"
+
+
+push:
+  - prefect.deployments.steps.run_shell_script:
+      script: echo "Build completed successfully"
+
+
+deployments:
+  - name: ingestao-dlt-clima
+    version: "{{ git.commit_hash }}"
+    tags: 
+      - "production"
+      - "automated"
+    description: "Deployment automatizado via Git"
+    entrypoint: "flows/flow.py:run_dlt_ingestion"
+    work_pool:
+      name: "local-pool"
+    schedule:
+      cron: "0 6 * * *"
+      timezone: "America/Sao_Paulo"

@@ -1,0 +1,2 @@
+dlt[postgres]>=1.14.1
+prefect>=3.0.0
