@@ -1,7 +1,7 @@
 name: mds-flows
 
 pull:
-  - prefect.deployments.steps.git_clone_project:
+  - prefect.deployments.steps.git_clone:
       repository: "https://github.com/caiohmb/mdsstack.git"
       branch: "main"  # ou master, develop, etc.
       # Para repositórios privados, você pode usar:
@@ -25,7 +25,7 @@ deployments:
       - "production"
       - "automated"
     description: "Deployment automatizado via Git"
-    entrypoint: "flows/flow.py:run_dlt_ingestion"
+    entrypoint: flows/flow.py:run_dlt_ingestion
     work_pool:
       name: "local-pool"
     schedule:
