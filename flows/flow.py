@@ -1,5 +1,6 @@
 from prefect import flow, get_run_logger
 import subprocess
+from prefect.blocks.system import Secret
 import os
 import sys
 
@@ -8,7 +9,19 @@ def run_dlt_ingestion():
     logger = get_run_logger()
     
     try:
-        logger.info("🔧 Iniciando execução do flow...")
+        logger.info("🔧 Configurando variáveis de ambiente...")
+        
+        # Configurar variáveis de ambiente para o DLT
+        try:
+            os.environ["DLT_SECRETS__DESTINATION__POSTGRES__DATABASE"] = Secret.load("pg-database").get()
+            os.environ["DLT_SECRETS__DESTINATION__POSTGRES__USERNAME"] = Secret.load("pg-username").get()
+            os.environ["DLT_SECRETS__DESTINATION__POSTGRES__PASSWORD"] = Secret.load("pg-password").get()
+            os.environ["DLT_SECRETS__DESTINATION__POSTGRES__HOST"] = Secret.load("pg-host").get()
+            os.environ["DLT_SECRETS__DESTINATION__POSTGRES__PORT"] = Secret.load("pg-port").get()
+            logger.info("✅ Variáveis de ambiente configuradas via secrets")
+        except Exception as secret_error:
+            logger.warning(f"⚠️  Erro ao carregar secrets: {secret_error}")
+            logger.info("🔄 Tentando usar variáveis de ambiente existentes...")
         
         # Verificar se o arquivo existe
         script_path = "dlt/ingestion.py"
