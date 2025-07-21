@@ -1,3 +1,4 @@
+print("==== INICIOU O SCRIPT ====")
 from prefect import flow, get_run_logger
 import subprocess
 from prefect.blocks.system import Secret
