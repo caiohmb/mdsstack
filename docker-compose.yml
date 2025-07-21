@@ -70,17 +70,10 @@ services:
     networks:
       - prefect-network
   prefect-worker:
-    image: prefecthq/prefect:3-latest
+    image: prefecthq/prefect:3-python3.12
+    entrypoint: ["/opt/prefect/entrypoint.sh", "prefect", "worker", "start", "-p", "default"]
     environment:
-      PREFECT_API_URL: http://prefect-server:4200/api
-      DOCKER_HOST: unix:///var/run/docker.sock
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: >
-      sh -c "pip install prefect-docker && 
-             prefect work-pool create local-pool --type docker || true &&
-             prefect config set PREFECT_API_URL=http://prefect-server:4200/api &&
-             prefect worker start --pool local-pool"
+      - PREFECT_API_URL=http://prefect-server:4200/api
     profiles: ["worker"]
     networks:
       - prefect-network
