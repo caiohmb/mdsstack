@@ -2,11 +2,11 @@ name: mds-flows
 
 pull:
   - prefect.deployments.steps.git_clone:
-      repository: https://github.com/caiohmb/mdsstack.git
-      branch : main
-  - prefect.deployments.steps.pip_install_requirements:
-      directory: "{{ clone-step.directory }}"
-      requirements_file: requirements.txt
+      repository: "https://github.com/caiohmb/mdsstack.git"
+      branch: "main"
+  - prefect.deployments.steps.set_working_directory:
+      directory: "/opt/prefect/mdsstack"  # adjust path to match your setup
+
 
 
 deployments:
