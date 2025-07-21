@@ -74,6 +74,11 @@ services:
     entrypoint: ["/opt/prefect/entrypoint.sh", "prefect", "worker", "start", "-p", "default"]
     environment:
       - PREFECT_API_URL=http://prefect-server:4200/api
+    depends_on:
+      prefect-services:
+        condition: service_healthy
+      prefect-server:
+        condition: service_healthy
     profiles: ["worker"]
     networks:
       - prefect-network
