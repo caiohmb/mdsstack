@@ -1,15 +1,8 @@
-from prefect import flow
+from prefect import flow, deploy
 
 @flow
-def run_dlt_ingestion():
-    pass
+def flou():
+    print("relouord")
 
 if __name__ == "__main__":
-    run_dlt_ingestion.from_source(
-        source="https://github.com/caiohmb/mdsstack.git",
-        entrypoint="flow.py:run_dlt_ingestion"
-    ).deploy(
-        name="ingestao-dlt-clima",
-        work_pool_name="local-pool",
-        schedule={"cron": "0 6 * * *", "timezone": "America/Sao_Paulo"}
-    )
+    flou.deploy(name="localflou", work_pool_name="local-pool", image="prefecthq/prefect:3-latest")

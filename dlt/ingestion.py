@@ -23,7 +23,7 @@ def fetch_historical_weather_data():
     client = RESTClient(base_url=HISTORY_API_URL)
     
     total_cities = len(CITIES)
-    total_days = 1
+    total_days = 3
     
     logger.info("🚀 Iniciando ingestão de dados climáticos históricos")
     logger.info(f"📊 Total de cidades: {total_cities}")
@@ -88,7 +88,7 @@ def fetch_historical_weather_data():
                             logger.warning(f"   🛑 Parando busca para {city['name']} - dados fora do período disponível")
                             break
                     
-                    time.sleep(0.1)  # Rate limiting
+                    time.sleep(0.01)  # Rate limiting
                     
                 except Exception as day_error:
                     logger.error(f"   ❌ Erro ao processar dia {day_offset + 1} para {city['name']}: {str(day_error)}")
