@@ -1,13 +1,11 @@
 from prefect import flow
-from prefect.blocks.notifications import MicrosoftTeamsWebhook
+from prefect.blocks.system import Secret
 
 
 @flow(log_prints=True)
 def hello_flow(name=""):
-    print(f"Hello, {name}, this file has been changed again!")
-
-    teams_webhook_block = MicrosoftTeamsWebhook.load("teams-test", validate=False)
-    teams_webhook_block.notify(f"Flow executado")
+    secret_block = Secret.load("block-test")
+    print(f"Hello, {name}, this is block test {secret_block}!")
 
 if __name__ == "__main__":
 	hello_flow("world")
