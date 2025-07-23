@@ -7,7 +7,7 @@ if __name__ == "__main__":
     ).deploy(
         name="my-first-deployment",
         parameters={
-            'name': 'DSI: Big Data Infrastructure'
+            'name': 'CDB - Data Solutions'
         },
         work_pool_name="default",
         cron="* * * * *",  # Run every munite
